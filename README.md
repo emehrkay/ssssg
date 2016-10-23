@@ -83,3 +83,13 @@ To override during run-time simply pass a setting in with prepended by a single 
 ```
 python ssssg.py run site.name -port=9999 -cache_file_directory=/some/path
 ```
+
+##Extras
+
+###Tag Search
+
+SSSSG will allow you to list pages that match any tags defined in a query string. This feature uses the `search_template` option to render the resulting html.
+
+```
+http://my.site/?tags=cars,some+other+tag,money
+```
