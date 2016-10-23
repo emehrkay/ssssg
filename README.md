@@ -104,3 +104,9 @@ SSSSG will allow you to list pages that match any tags defined in a query string
 ```
 http://my.site/?tags=cars,some+other+tag,money
 ```
+
+###Power Pages
+
+While the pages are Markdown, they are run through [Tornado's templating engine](http://www.tornadoweb.org/en/stable/guide/templates.html). This gives you the full power of Python in your markup. Be responsible.
+
+> More power coming soon in the form of UI.Modules
