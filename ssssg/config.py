@@ -17,4 +17,6 @@ define('base_template', os.path.join(HERE, 'pages', 'base.html'),
     help='The default template to use when rendering a page')
 define('search_template', os.path.join(HERE, 'pages', 'search.html'),
     help='The default template to use when rendering search results')
+define('default_error_title', 'Server Error',
+    help='The default title to show when there is an error rendering the page')
 define('debug', True, help='Hot-reload or not')

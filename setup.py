@@ -14,7 +14,7 @@ setup(
     packages = find_packages(),
     version = __version__,
     description = 'Static Site Generator number 1,000,000,000',
-    url = '',
+    url = 'https://github.com/emehrkay/ssssg',
     author = 'Mark Henderson',
     author_email = 'emehrkay@gmail.com',
     long_description = __doc__,

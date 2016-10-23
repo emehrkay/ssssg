@@ -5,7 +5,12 @@ from ssssg.commands import run_ssssg, build_index
 
 
 def help_text():
-    return """usage: python ssssg.py run site"""
+    return """usage: 
+    To index the site:
+        python ssssg.py index /path/to/site
+
+    To run the site:
+        python ssssg.py run site"""
 
 
 if __name__ == "__main__":
@@ -13,7 +18,9 @@ if __name__ == "__main__":
 
     options.parse_command_line(sys.argv[2:])
 
-    if args[0] == 'run':
+    if len(args) < 2:
+        print(help_text())
+    elif args[0] == 'run':
         run_ssssg(args[1])
     elif args[0] == 'index':
         build_index(args[1])

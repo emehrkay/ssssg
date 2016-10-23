@@ -19,7 +19,7 @@ from . import SSSSGException
 def run_ssssg(site):
     """
     """
-    from . import IndexHandler, PageHandler, options
+    from . import IndexHandler, PageHandler, ErrorHandler, options
 
     site_cache_file = cache_file(site)
 
@@ -37,6 +37,7 @@ def run_ssssg(site):
         'site_cache_file': site_cache_file,
         'static_path': cache['site']['static_path'],
         'autoescape': None,
+        'default_handler_class': ErrorHandler,
         #'ui_modules': cache['site']['ui_modules'],
     }
 

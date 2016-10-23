@@ -1,6 +1,6 @@
 import copy
 
-from tornado.web import Application, RequestHandler, template
+from tornado.web import Application, RequestHandler, template, HTTPError
 
 import markdown
 
@@ -28,6 +28,18 @@ class PageHandler(RequestHandler):
 
         return temp.generate(**args)
 
+    def write_error(self, status_code, **kwargs):
+        temp = options.four_oh_four
+        data = {'title': options.default_error_title}
+
+        if status_code > 499:
+            temp = options.five_oh_oh
+
+        data['content'] = self.render_string(temp)
+        content = self.render_string(options.base_template, **data)
+
+        return self.finish(content)
+
     def get_page(self, page):
         md = markdown.Markdown(extensions=['markdown.extensions.meta'])
 
@@ -43,20 +55,17 @@ class PageHandler(RequestHandler):
         cache = self.application.cache['pages']
         data = {}
 
-        if not slug or slug not in cache:
-            page = options.four_oh_four
-        elif tags:
+        if tags:
             page = options.search_template
             data['pages'] = filter_by_tags(tags, cache)
             data['tags'] = tags
             data['content'] = self.render_string(page, **data)
+        elif not slug or slug not in cache:
+            raise HTTPError(404)
         else:
             p_slug = cache[slug]
             page = p_slug['file']
-            data = {
-                'title': p_slug['title'],
-            }
-
+            data['title'] = p_slug['title']
             converted = md.convert(contents(page))
             data['content'] = self._template_string(converted)
 
@@ -69,3 +78,9 @@ class IndexHandler(PageHandler):
 
     def get(self):
         return super().get('/')
+
+
+class ErrorHandler(PageHandler):
+
+    def get(self):
+        raise HTTPError(404)
