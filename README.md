@@ -43,6 +43,8 @@ Pages are rendered using the markdown package and the `markdown.extensions.meta`
 * Slug -- this will be how the page is referenced in the browser
 * Tags -- a comma separated list of tags that you can use to identify a page
 
+Example page with meta-data:
+
 ```html
 title: About My.Site
 slug: about
