@@ -1,6 +1,6 @@
-# ssssg (Super Simple Static Site Generator)
+# SSSSG (Super Simple Static Site Generator)
 
-ssssg is a very simple static site generator written in Python used to render Markdown files.
+SSSSG is a very simple static site generator written in Python used to render Markdown files.
 
 ##Dependencies
 
@@ -24,20 +24,20 @@ SSSSG is easy to use employing only two commands: `run` and `index`. You will ne
 
 ```
    /mark.com
-       index.md
-       about.md
-       /static
-       	/css
-       		mark.css
-       	/js
-       		mark.js
+        index.md
+        about.md
+        /static
+            /css
+                mark.css
+            /js
+                mark.js
 ```
 
 ###Pages
 
 Pages are rendered using the markdown package and the `markdown.extensions.meta` extension. This allows for you to add custom meta-data to each page.
 
-####ssssg Supported Meta-data
+####SSSSG Supported Meta-data
 
 * Title -- the page title
 * Slug -- this will be how the page is referenced in the browser
@@ -62,6 +62,9 @@ This command runs the site.
 ```
 python ssssg.py run site.name
 ```
+
+> currently sssg is designed to only run one site at a time. If you want to run multiple sites you simply spawn multiple instances of the run command pointing to different sites.
+
 
 ###Configuration Options
 
