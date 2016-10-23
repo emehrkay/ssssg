@@ -33,11 +33,12 @@ class PageHandler(RequestHandler):
 
     def get(self, slug=None):
         md = markdown.Markdown(extensions=['markdown.extensions.meta'])
+        cache = self.application.cache['pages']
 
-        if not slug or slug not in self.application.cache:
+        if not slug or slug not in cache:
             page = options.four_oh_four
         else:
-            page = self.application.cache[slug]['file']
+            page = cache[slug]['file']
 
         page = self.get_page(page)
         content = self._template_string(page)

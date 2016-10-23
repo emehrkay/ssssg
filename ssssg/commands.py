@@ -27,6 +27,7 @@ def run_ssssg(site):
         raise SSSSGException(('There is no cache file for site: {} in'
             ' location: {}'.format(site, site_cache_file)))
 
+    cache = json.loads(contents(site_cache_file))
     routes = (
         (r'/', IndexHandler),
         (r'/([\w\_\-]+)/?', PageHandler),
@@ -34,10 +35,12 @@ def run_ssssg(site):
     settings = {
         'debug': options.debug,
         'site_cache_file': site_cache_file,
+        'static_path': cache['site']['static_path'],
+        #'ui_modules': cache['site']['ui_modules'],
     }
 
     app = Application(routes, **settings)
-    app.cache = json.loads(contents(site_cache_file))
+    app.cache = cache
 
     app.listen(options.port)
     ioloop.IOLoop.current().start()
@@ -45,7 +48,15 @@ def run_ssssg(site):
 
 def build_index(site):
     site_name = list(filter(bool, site.split(os.sep)))[-1]
-    index = {}
+    index = {
+        'site': {
+            'name': site_name,
+            'path': site,
+            'ui_modules' : os.path.join(site, 'modules'),
+            'static_path': os.path.join(site, 'static'),
+        },
+        'pages': {},
+    }
     index_file = cache_file(site_name)
     index_md = os.path.join(site, 'index.md')
 
@@ -92,7 +103,7 @@ def build_index(site):
                 if _file == index_md:
                     slug = '/'
 
-                index[slug] = {
+                index['pages'][slug] = {
                     'tags': list(tags),
                     'title': title,
                     'file': _file,
@@ -102,6 +113,8 @@ def build_index(site):
 
     with open(index_file, 'w') as f:
         f.write(json.dumps(index))
+
+    return index
 
 
 def contents(file):
