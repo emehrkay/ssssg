@@ -72,7 +72,7 @@ The default setup defines a few configuration options that can be overwritten at
 * __four\_oh_four__ [CWD + '/pages/404.md'] -- The default 404 page to render (should be a .md file)
 * __five\_oh_oh__ [CWD + '/pages/500.md'] -- The default 500 page to render (should be a .md file)
 * __base\_template__ [CWD + '/pages/base.html'] -- The base template that will be loaded with every page
-* __search\_template__, [CWD + '/pages/search.html'] -- The default template to use when rendering search results
+* __search\_template__ [CWD + '/pages/search.html'] -- The default template to use when rendering search results
 
 To override during run-time simply pass a setting in with prepended by a single dash (-)
 
