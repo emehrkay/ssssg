@@ -1,3 +1,10 @@
+## 0.4.0 -- 10/23/2016
+
+**Added**
+
+    * Published meta-data flag for pages. Defaults to true
+
+
 ## 0.3.0 -- 10/23/2016
 
 **Added**

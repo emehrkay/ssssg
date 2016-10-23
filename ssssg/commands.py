@@ -103,6 +103,16 @@ def build_index(site):
                 except:
                     tags = []
 
+                try:
+                    published = meta.get('published')[0].strip().lower()
+
+                    if published not in ['true', 'false']:
+                        published = bool(published)
+
+                    published = bool(json.loads(published))
+                except:
+                    published = True
+
                 if _file == index_md:
                     slug = '/'
 
@@ -110,6 +120,7 @@ def build_index(site):
                     'tags': list(tags),
                     'title': title,
                     'file': _file,
+                    'published': published,
                 }
 
     os.makedirs(os.path.dirname(index_file), exist_ok=True)
@@ -137,7 +148,7 @@ def filter_by_tags(tags, cache):
     pages = {}
 
     for slug, page in cache.items():
-        if set(tags) & set(page['tags']):
+        if page['published'] and set(tags) & set(page['tags']):
             pages[slug] = page
 
     return pages

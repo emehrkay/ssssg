@@ -42,6 +42,7 @@ Pages are rendered using the markdown package and the `markdown.extensions.meta`
 * Title -- the page title
 * Slug -- this will be how the page is referenced in the browser
 * Tags -- a comma separated list of tags that you can use to identify a page
+* Published -- a boolean flag stating if the page should be published (viewable via the browser) or not. Defaults to true.
 
 Example page with meta-data:
 

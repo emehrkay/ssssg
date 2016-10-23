@@ -60,7 +60,7 @@ class PageHandler(RequestHandler):
             data['pages'] = filter_by_tags(tags, cache)
             data['tags'] = tags
             data['content'] = self.render_string(page, **data)
-        elif not slug or slug not in cache:
+        elif not slug or slug not in cache or not cache[slug]['published']:
             raise HTTPError(404)
         else:
             p_slug = cache[slug]
