@@ -18,8 +18,7 @@ from . import SSSSGException
 def run_ssssg(site):
     """
     """
-
-    from . import IndexHandler, PageHandler
+    from . import IndexHandler, PageHandler, options
 
     site_cache_file = cache_file(site)
 
@@ -64,6 +63,7 @@ def build_index(site):
         if not parts:
             parts = [str(uuid.uuid4())]
 
+        parts = list(filter(bool, parts))
         slug = '-'.join(parts).lower()
 
         return re.sub('\W', '-', slug)
@@ -91,6 +91,7 @@ def build_index(site):
                 try:
                     slug = meta.get('slug')[0]
                 except:
+                    import pudb; pu.db
                     sp = parts[:]
                     sp.append(title)
                     slug = make_slug(sp)
