@@ -63,7 +63,7 @@ This command runs the site.
 python ssssg.py run site.name
 ```
 
-> currently SSSSG is designed to only run one site at a time. If you want to run multiple sites you simply spawn multiple instances of the run command pointing to different sites.
+> currently SSSSG is designed to only run one site at a time. If you want to run multiple sites you simply spawn multiple instances of the run command pointing to different sites with different ports.
 
 
 ###Configuration Options
