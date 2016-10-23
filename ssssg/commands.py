@@ -1,3 +1,4 @@
+import copy
 import json
 import os
 import re
@@ -35,6 +36,7 @@ def run_ssssg(site):
         'debug': options.debug,
         'site_cache_file': site_cache_file,
         'static_path': cache['site']['static_path'],
+        'autoescape': None,
         #'ui_modules': cache['site']['ui_modules'],
     }
 
@@ -91,7 +93,6 @@ def build_index(site):
                 try:
                     slug = meta.get('slug')[0]
                 except:
-                    import pudb; pu.db
                     sp = parts[:]
                     sp.append(title)
                     slug = make_slug(sp)
@@ -126,3 +127,16 @@ def contents(file):
 def cache_file(site_name):
     return os.path.join(options.cache_file_directory,
         '{}.cache'.format(site_name))
+
+
+def filter_by_tags(tags, cache):
+    if not isinstance(tags, (list, tuple)):
+        tags = [tags,]
+
+    pages = {}
+
+    for slug, page in cache.items():
+        if set(tags) & set(page['tags']):
+            pages[slug] = page
+
+    return pages

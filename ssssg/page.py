@@ -1,9 +1,11 @@
+import copy
+
 from tornado.web import Application, RequestHandler, template
 
 import markdown
 
 from .config import options
-from .commands import contents
+from .commands import contents, filter_by_tags
 
 
 class PageHandler(RequestHandler):
@@ -32,18 +34,35 @@ class PageHandler(RequestHandler):
         return md.convert(contents(page))
 
     def get(self, slug=None):
+        try:
+            tags = self.get_argument('tags', None).split(',')
+        except:
+            tags = None
+
         md = markdown.Markdown(extensions=['markdown.extensions.meta'])
         cache = self.application.cache['pages']
+        data = {}
 
         if not slug or slug not in cache:
             page = options.four_oh_four
+        elif tags:
+            page = options.search_template
+            data['pages'] = filter_by_tags(tags, cache)
+            data['tags'] = tags
+            data['content'] = self.render_string(page, **data)
         else:
-            page = cache[slug]['file']
+            p_slug = cache[slug]
+            page = p_slug['file']
+            data = {
+                'title': p_slug['title'],
+            }
 
-        page = self.get_page(page)
-        content = self._template_string(page)
+            converted = md.convert(contents(page))
+            data['content'] = self._template_string(converted)
 
-        return self.write(content)
+        content = self.render_string(options.base_template, **data)
+
+        return self.finish(content)
 
 
 class IndexHandler(PageHandler):
