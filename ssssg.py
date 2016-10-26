@@ -16,13 +16,11 @@ def help_text():
 if __name__ == "__main__":
     args = sys.argv[1:]
 
-    options.parse_command_line(sys.argv[2:])
-
     if len(args) < 2:
         print(help_text())
     elif args[0] == 'run':
-        run_ssssg(args[1])
+        run_ssssg(args[1], *sys.argv[2:])
     elif args[0] == 'index':
-        build_index(args[1])
+        build_index(args[1], *sys.argv[2:])
     else:
         print(help_text())

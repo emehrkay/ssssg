@@ -16,10 +16,12 @@ from . import options
 from . import SSSSGException
 
 
-def run_ssssg(site):
+def run_ssssg(site, *args):
     """
     """
     from . import IndexHandler, PageHandler, ErrorHandler, options
+
+    options.parse_command_line(args)
 
     site_cache_file = cache_file(site)
 
@@ -32,6 +34,12 @@ def run_ssssg(site):
         (r'/', IndexHandler),
         (r'/([\w\_\-]+)/?', PageHandler),
     )
+
+    if cache['config_file']:
+        options.parse_config_file(cache['config_file'])
+
+    options.parse_command_line(args)
+
     settings = {
         'debug': options.debug,
         'site_cache_file': site_cache_file,
@@ -45,10 +53,13 @@ def run_ssssg(site):
     app.cache = cache
 
     app.listen(options.port)
+
+    print('{} is running on port: {}'.format(site, options.port))
+
     ioloop.IOLoop.current().start()
 
 
-def build_index(site):
+def build_index(site, *args):
     site_name = list(filter(bool, site.split(os.sep)))[-1]
     index = {
         'site': {
@@ -59,8 +70,16 @@ def build_index(site):
         },
         'pages': {},
     }
-    index_file = cache_file(site_name)
     index_md = os.path.join(site, 'index.md')
+    config_file = os.path.join(site, 'config.py')
+
+    if os.path.isfile(config_file):
+        index['config_file'] = config_file
+        options.parse_config_file(config_file)
+
+    options.parse_command_line(args)
+
+    index_file = cache_file(site_name)
 
     def make_slug(parts):
         if not parts:

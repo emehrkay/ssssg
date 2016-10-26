@@ -24,6 +24,7 @@ SSSSG is easy to use employing only two commands: `run` and `index`. You will ne
 
 ```
    /mark.com
+        config.py
         index.md
         about.md
         /static
@@ -90,17 +91,30 @@ The default setup defines a few configuration options that can be overwritten at
 * __search\_template__ [CWD + '/pages/search.html'] -- The default template to use when rendering search results
 * __default\_error_title__ ['Server Error'] -- The default title to show when there is an error rendering the page
 
-To override during run-time simply pass a setting in with prepended by a single dash (-)
+SSSG provides two ways to override configuration options during run-time: 
+
+The first is to define the options in your site's `config.py` file (this file must be in your site's root and is pure Python):
+
+```python
+port = 9999
+default_error_title = 'Some Witty Error Title For My Site'
+```
+
+The other is to simply pass a setting in with prepended by a single dash (-) when initializing the site:
 
 ```
 python ssssg.py run site.name -port=9999 -cache_file_directory=/some/path
 ```
 
+> The `config.py` is read first, then the settings flags are applied last.
+> !NOTE: If you want to define the cache_file_directory in your config.py file, you must pass it in as a initialization flag also. 
+
+
 ##Extras
 
 ###Tag Search
 
-SSSSG will allow you to list pages that match any tags defined in a query string. This feature uses the `search_template` option to render the resulting html.
+SSSSG will allow you to list pages that match any tags defined in a query string. This feature uses the `search_template` option to render the resulting HTML.
 
 ```
 http://my.site/?tags=cars,some+other+tag,money
