@@ -1,3 +1,9 @@
+## 0.5.0 -- 10/25/2016
+
+**Added**
+
+    * Added the ability to set configuration options via a config.py file in the site's root
+
 ## 0.4.0 -- 10/23/2016
 
 **Added**
