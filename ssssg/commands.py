@@ -35,7 +35,7 @@ def run_ssssg(site, *args):
         (r'/([\w\_\-]+)/?', PageHandler),
     )
 
-    if cache['config_file']:
+    if 'config_file' in cache:
         options.parse_config_file(cache['config_file'])
 
     options.parse_command_line(args)
@@ -60,6 +60,7 @@ def run_ssssg(site, *args):
 
 
 def build_index(site, *args):
+    site = os.path.abspath(site)
     site_name = list(filter(bool, site.split(os.sep)))[-1]
     index = {
         'site': {

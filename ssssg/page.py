@@ -53,7 +53,7 @@ class PageHandler(RequestHandler):
 
         md = markdown.Markdown(extensions=['markdown.extensions.meta'])
         cache = self.application.cache['pages']
-        data = {}
+        data = {'pages': cache}
 
         if tags:
             page = options.search_template
@@ -67,7 +67,7 @@ class PageHandler(RequestHandler):
             page = p_slug['file']
             data['title'] = p_slug['title']
             converted = md.convert(contents(page))
-            data['content'] = self._template_string(converted)
+            data['content'] = self._template_string(converted, **data)
 
         content = self.render_string(options.base_template, **data)
 

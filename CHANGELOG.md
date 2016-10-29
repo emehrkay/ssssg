@@ -1,3 +1,11 @@
+### 0.5.1 -- 10/29/2016
+
+**Fixed**
+
+    * Made all configuration paths full paths.
+    * Passing all of the pages to the rendered template as `pages`.
+
+
 ## 0.5.0 -- 10/25/2016
 
 **Added**
