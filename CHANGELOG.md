@@ -1,4 +1,17 @@
-### 0.5.1 -- 10/29/2016
+## 0.6.0 -- 10/30/2016
+
+**Fixed**
+
+    * All meta data from the page is passed into the templates
+
+**Added**
+
+    * The ability to nest template rendering by defining `templates` in the page meta data
+    * Added date_created and date_modified to the page meta data
+    * Added date_published as page meta data
+
+
+## 0.5.1 -- 10/29/2016
 
 **Fixed**
 
@@ -11,6 +24,7 @@
 **Added**
 
     * Added the ability to set configuration options via a config.py file in the site's root
+
 
 ## 0.4.0 -- 10/23/2016
 

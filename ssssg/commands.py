@@ -68,6 +68,7 @@ def build_index(site, *args):
             'path': site,
             'ui_modules' : os.path.join(site, 'modules'),
             'static_path': os.path.join(site, 'static'),
+            'template_path': os.path.join(site, 'templates'),
         },
         'pages': {},
     }
@@ -133,14 +134,28 @@ def build_index(site, *args):
                 except:
                     published = True
 
+                try:
+                    templates = meta.get('templates')[0].split(',')
+                except:
+                    templates = []
+
                 if _file == index_md:
                     slug = '/'
+
+                try:
+                    date_published = meta.get('date_published')[0]
+                except Exception as e:
+                    date_published = os.path.getmtime(_file)
 
                 index['pages'][slug] = {
                     'tags': list(tags),
                     'title': title,
                     'file': _file,
                     'published': published,
+                    'templates': templates,
+                    'date_created': os.path.getctime(_file),
+                    'date_modified': os.path.getmtime(_file),
+                    'date_published': date_published,
                 }
 
     os.makedirs(os.path.dirname(index_file), exist_ok=True)

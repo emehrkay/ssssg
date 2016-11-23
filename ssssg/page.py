@@ -1,4 +1,5 @@
 import copy
+import os
 
 from tornado.web import Application, RequestHandler, template, HTTPError
 
@@ -63,11 +64,17 @@ class PageHandler(RequestHandler):
         elif not slug or slug not in cache or not cache[slug]['published']:
             raise HTTPError(404)
         else:
-            p_slug = cache[slug]
-            page = p_slug['file']
-            data['title'] = p_slug['title']
-            converted = md.convert(contents(page))
+            data.update(cache[slug])
+
+            converted = md.convert(contents(data['file']))
             data['content'] = self._template_string(converted, **data)
+
+            for temp in data['templates']:
+                temp_path = os.path.join(
+                    self.application.cache['site']['template_path'], temp)
+                content = (self.render_string(temp_path, **data)
+                           .decode('utf-8'))
+                data['content'] = md.convert(content)
 
         content = self.render_string(options.base_template, **data)
 
