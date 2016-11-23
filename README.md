@@ -44,6 +44,7 @@ Pages are rendered using the markdown package and the `markdown.extensions.meta`
 * Slug -- this will be how the page is referenced in the browser
 * Tags -- a comma separated list of tags that you can use to identify a page
 * Published -- a boolean flag stating if the page should be published (viewable via the browser) or not. Defaults to true.
+* Templates -- a comma separated list of template files found in the `templates` directory. The page's content will be passed through the templates in F.I.F.O order.
 
 Example page with meta-data:
 
@@ -90,8 +91,9 @@ The default setup defines a few configuration options that can be overwritten at
 * __base\_template__ [CWD + '/pages/base.html'] -- The base template that will be loaded with every page
 * __search\_template__ [CWD + '/pages/search.html'] -- The default template to use when rendering search results
 * __default\_error_title__ ['Server Error'] -- The default title to show when there is an error rendering the page
+* __watch\_for_changes__ [True] -- Flag stating if the site should be automatically re-indexed if there are changes in the site files
 
-SSSG provides two ways to override configuration options during run-time: 
+SSSG provides two ways to override configuration options during run-time:
 
 The first is to define the options in your site's `config.py` file (this file must be in your site's root and is pure Python):
 

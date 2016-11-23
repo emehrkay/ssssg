@@ -1,8 +1,10 @@
 import copy
 import json
 import os
+import platform
 import re
 import sys
+import time
 import uuid
 
 from pathlib import Path
@@ -56,7 +58,44 @@ def run_ssssg(site, *args):
 
     print('{} is running on port: {}'.format(site, options.port))
 
+    if options.watch_for_changes:
+        watch_directory(cache['site']['path'], app, *args)
+
     ioloop.IOLoop.current().start()
+
+
+def watch_directory(directory, application, *args):
+    print(('watching for changes in: {}'.format(directory)))
+
+    def get_files():
+        dir_files = []
+
+        try:
+            for root, subdirs, files in os.walk(directory):
+                for f in files:
+                    full = os.path.join(root, f)
+                    mtime = os.path.getmtime(full)
+                    dir_files.append((f, mtime))
+        except Exception as e:
+            print('!!!!', e)
+
+        return dir_files
+
+    files = {'original': get_files()}
+
+    def watch():
+        current = get_files()
+        changed = abs((files['original'] > current)
+            - (files['original'] < current))
+        files['original'] = current
+
+        if changed:
+            print('Rebuilding index for: {}'.format(directory))
+            application.cache = build_index(directory, *args)
+
+        ioloop.IOLoop.current().add_callback(watch)
+
+    watch()
 
 
 def build_index(site, *args):

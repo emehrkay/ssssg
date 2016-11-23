@@ -1,3 +1,10 @@
+## 0.7.0 -- 11/23/2016
+
+**Added**
+
+    * watch_for_changes configuration setting that will automatically re-index the site when changes are found.
+
+
 ## 0.6.0 -- 10/30/2016
 
 **Fixed**
