@@ -92,6 +92,7 @@ The default setup defines a few configuration options that can be overwritten at
 * __search\_template__ [CWD + '/pages/search.html'] -- The default template to use when rendering search results
 * __default\_error_title__ ['Server Error'] -- The default title to show when there is an error rendering the page
 * __watch\_for_changes__ [60000 (60 seconds)] -- The time in milliseconds to check the site directory for changes and re-index the files. Set to zero to disable watching.
+* __debug__ [True] -- Flag that states if non-published pages should be viewable by their slug.
 
 SSSG provides two ways to override configuration options during run-time:
 

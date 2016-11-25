@@ -61,9 +61,12 @@ class PageHandler(RequestHandler):
             data['pages'] = filter_by_tags(tags, cache)
             data['tags'] = tags
             data['content'] = self.render_string(page, **data)
-        elif not slug or slug not in cache or not cache[slug]['published']:
+        elif not slug or slug not in cache:
             raise HTTPError(404)
         else:
+            if not options.debug and not cache[slug]['published']:
+                raise HTTPError(404)
+
             data.update(cache[slug])
 
             converted = md.convert(contents(data['file']))
