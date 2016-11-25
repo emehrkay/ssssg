@@ -19,7 +19,7 @@ define('search_template', os.path.join(HERE, 'pages', 'search.html'),
     help='The default template to use when rendering search results')
 define('default_error_title', 'Server Error',
     help='The default title to show when there is an error rendering the page')
-define('watch_for_changes', True,
-    help=('Flag stating if the site directory should be automatically'
-          ' updated when there are changes.'))
+define('watch_for_changes', 60 * 1000,
+    help=('The time in milliseconds to check the site directory for changes'
+          ' and re-index the files. Set to zero to disable watching.'))
 define('debug', True, help='Hot-reload or not')

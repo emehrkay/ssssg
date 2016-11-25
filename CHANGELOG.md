@@ -1,6 +1,13 @@
+## 0.7.2 -- 11/24/2016
+
+**Fixed**
+
+    * Added date created ordering to the pages object that is stored in the cache file.
+
+
 ## 0.7.1 -- 11/24/2016
 
-**Fix**
+**Fixed**
 
     * Added slugify method to ensure that slugs are url safe/pretty
 

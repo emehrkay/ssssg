@@ -7,6 +7,7 @@ import sys
 import time
 import uuid
 
+from collections import OrderedDict
 from pathlib import Path
 
 import markdown
@@ -59,12 +60,13 @@ def run_ssssg(site, *args):
     print('{} is running on port: {}'.format(site, options.port))
 
     if options.watch_for_changes:
-        watch_directory(cache['site']['path'], app, *args)
+        watch_directory(cache['site']['path'], app,
+            options.watch_for_changes, *args)
 
     ioloop.IOLoop.current().start()
 
 
-def watch_directory(directory, application, *args):
+def watch_directory(directory, application, watch_for_changes, *args):
     print(('watching for changes in: {}'.format(directory)))
 
     def get_files():
@@ -93,9 +95,7 @@ def watch_directory(directory, application, *args):
             print('Rebuilding index for: {}'.format(directory))
             application.cache = build_index(directory, *args)
 
-        ioloop.IOLoop.current().add_callback(watch)
-
-    watch()
+    ioloop.PeriodicCallback(watch, watch_for_changes).start()
 
 
 def build_index(site, *args):
@@ -201,6 +201,12 @@ def build_index(site, *args):
 
     os.makedirs(os.path.dirname(index_file), exist_ok=True)
 
+    def reorder(t):
+        return t[1]['date_created']
+
+    index['pages'] = OrderedDict(sorted(index['pages'].items(), key=reorder,
+        reverse=True))
+
     with open(index_file, 'w') as f:
         f.write(json.dumps(index))
 
@@ -235,6 +241,8 @@ def slugify(s):
     Simplifies ugly strings into something URL-friendly.
     >>> print slugify("[Some] _ Article's Title--")
     some-articles-title
+
+    @thanks: http://dolphm.com/slugify-a-string-in-python/
     """
     s = s.lower()
 

@@ -91,7 +91,7 @@ The default setup defines a few configuration options that can be overwritten at
 * __base\_template__ [CWD + '/pages/base.html'] -- The base template that will be loaded with every page
 * __search\_template__ [CWD + '/pages/search.html'] -- The default template to use when rendering search results
 * __default\_error_title__ ['Server Error'] -- The default title to show when there is an error rendering the page
-* __watch\_for_changes__ [True] -- Flag stating if the site should be automatically re-indexed if there are changes in the site files
+* __watch\_for_changes__ [60000 (60 seconds)] -- The time in milliseconds to check the site directory for changes and re-index the files. Set to zero to disable watching.
 
 SSSG provides two ways to override configuration options during run-time:
 
