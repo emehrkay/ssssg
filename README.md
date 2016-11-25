@@ -41,7 +41,7 @@ Pages are rendered using the markdown package and the `markdown.extensions.meta`
 ####SSSSG Supported Meta-data
 
 * Title -- the page title
-* Slug -- this will be how the page is referenced in the browser
+* Slug -- this will be how the page is referenced in the browser. If this is not defined, SSSSG will take the file name along with the path to create a slug.
 * Tags -- a comma separated list of tags that you can use to identify a page
 * Published -- a boolean flag stating if the page should be published (viewable via the browser) or not. Defaults to true.
 * Templates -- a comma separated list of template files found in the `templates` directory. The page's content will be passed through the templates in F.I.F.O order.

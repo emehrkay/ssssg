@@ -1,3 +1,10 @@
+## 0.7.1 -- 11/24/2016
+
+**Fix**
+
+    * Added slugify method to ensure that slugs are url safe/pretty
+
+
 ## 0.7.0 -- 11/23/2016
 
 **Added**

@@ -158,6 +158,8 @@ def build_index(site, *args):
                     sp.append(title)
                     slug = make_slug(sp)
 
+                slug = slugify(slug)
+
                 try:
                     tags = map(str.strip, meta.get('tags')[0].split(','))
                 except:
@@ -226,3 +228,23 @@ def filter_by_tags(tags, cache):
             pages[slug] = page
 
     return pages
+
+
+def slugify(s):
+    """
+    Simplifies ugly strings into something URL-friendly.
+    >>> print slugify("[Some] _ Article's Title--")
+    some-articles-title
+    """
+    s = s.lower()
+
+    for c in [' ', '-', '.', '/']:
+        s = s.replace(c, '_')
+
+    s = re.sub('\W', '', s)
+    s = s.replace('_', ' ')
+    s = re.sub('\s+', ' ', s)
+    s = s.strip()
+    s = s.replace(' ', '-')
+
+    return s
