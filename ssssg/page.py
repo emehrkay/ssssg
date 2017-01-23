@@ -12,7 +12,10 @@ from .commands import contents, filter_by_tags
 class PageHandler(RequestHandler):
 
     def _template_string(self, string, **kwargs):
-        temp = template.Template(string, autoescape=None)
+        template_path = self.application.cache['site']['template_path']
+        loader = template.Loader(template_path)
+        temp = template.Template(string, autoescape=None,
+            loader=loader)
         args = dict(
             handler=self,
             request=self.request,

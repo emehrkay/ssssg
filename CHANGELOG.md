@@ -1,3 +1,10 @@
+## 0.8.1 -- 1/22/2017
+
+**Fixed**
+
+    * Fixed a bug where there was no template loader being used when rendering the page. This caused errors when pages were looking to {% extend %} or {% include %} other template files.
+
+
 ## 0.8.0 -- 1/22/2017
 
 **Added**
