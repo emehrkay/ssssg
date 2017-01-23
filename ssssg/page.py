@@ -52,7 +52,9 @@ class PageHandler(RequestHandler):
         except:
             tags = None
 
-        md = markdown.Markdown(extensions=['markdown.extensions.meta'])
+        md = markdown.Markdown(extensions=['markdown.extensions.meta',
+            'codehilite'])
+        print('>>x', md)
         cache = self.application.cache['pages']
         data = {'pages': cache}
 

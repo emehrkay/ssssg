@@ -1,3 +1,14 @@
+## 0.8.0 -- 1/22/2017
+
+**Added**
+
+    * Cotent is rendered with the codehilite filter -- https://pythonhosted.org/Markdown/extensions/code_hilite.html
+
+**Updated**
+
+     * Now requires Pygments for help with codehilite extension
+
+
 ## 0.7.2 -- 11/24/2016
 
 **Fixed**
