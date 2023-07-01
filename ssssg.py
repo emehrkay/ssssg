@@ -1,26 +1,17 @@
 import sys
 
 from ssssg.config import options
-from ssssg.commands import run_ssssg, build_index
+from ssssg.main import SSSG
 
 
-def help_text():
-    return """usage: 
-    To index the site:
-        python ssssg.py index /path/to/site
+if __name__ == '__main__':
+    options.parse_command_line(sys.argv)
 
-    To run the site:
-        python ssssg.py run site"""
+    ssssg = SSSG(site_path=options.site_path,
+        source_path=options.source_path, template_path=options.template_path)
+    ssssg.create_site()
 
+    if options.index_directories:
+        ssssg.index_directories()
 
-if __name__ == "__main__":
-    args = sys.argv[1:]
-
-    if len(args) < 2:
-        print(help_text())
-    elif args[0] == 'run':
-        run_ssssg(args[1], *sys.argv[2:])
-    elif args[0] == 'index':
-        build_index(args[1], *sys.argv[2:])
-    else:
-        print(help_text())
+    ssssg.save()

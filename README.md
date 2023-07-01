@@ -6,6 +6,7 @@ SSSSG is a very simple static site generator written in Python used to render Ma
 
 * tornado
 * markdown
+* python-dateutil
 * I wrote it in Python 3.5, but there shouldn't be any reason for it not to run in 2.7
 
 ##Installation
@@ -16,7 +17,11 @@ python setup.py install
 
 ##Usage
 
-SSSSG is easy to use employing only two commands: `run` and `index`. You will need to setup your site files with the following rules:
+SSSSG is easy to use as it does one thing -- turn markdown files into html.
+
+Once installed, you simply point the python file to your markdown files.
+
+employing only one command `run` and `index`. You will need to setup your site files with the following rules:
 
 1. Create a directory to store your pages. The directory name will be the name that you reference when you run the site.
 2. Store all of your viewable files with a `.md` extension.
