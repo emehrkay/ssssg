@@ -1,3 +1,4 @@
+from typing import Any
 import markdown
 import os
 import re
@@ -8,8 +9,8 @@ from dateutil import parser
 
 from .config import options
 
-from tornado.web import template
-
+from tornado.web import template, _UIModuleNamespace, TemplateModule, _linkify, _xsrf_form_html
+from tornado.template import ObjectDict
 
 def log(content, error=False):
     ctrl = "\t" if error else ""
@@ -59,18 +60,23 @@ class SSSG:
 
     def __init__(self, site_path, source_path=None, template_path=None,
                  output_path=None):
-        self.site_path = os.path.abspath(site_path)
+        site_path = os.path.expanduser(site_path if site_path else '')
+        site_path = os.path.abspath(site_path)
+        self.site_path = site_path
         self.source_path = source_path or os.path.join(site_path, 'src')
         self.template_path =  template_path or os.path.join(site_path,
             'template')
         self.output_path =  output_path or os.path.join(site_path,
             'public').rstrip(os.sep)
-        self.site = os.path.abspath(site_path)
+        self.tags_page = os.path.join(self.template_path, 'tags_page.html')
+        self.tag_dir = f'{self.output_path}/_tags'
+        self.site = site_path
         self.site_map = {}
         self.site_files = {}
         self.published_pages = {}
         self.template = Template(self.template_path)
-        self.pages = Pages(source_path=source_path, template=self.template)
+        self.pages = Pages(source_path=source_path)
+        self.tags = TaggedPages(page=self.tags_page, template=self.template)
 
     def create_site(self):
         # build the site map. The load the actual files, and finally save the
@@ -112,7 +118,6 @@ class SSSG:
                     previous_page=prev_page, next_page=next_page)
                 write(save_file, content)
             except Exception as e:
-                import pudb; pu.db
                 log(f'unable to save file: {save_file} -- {e}', True)
 
         unpublished = self.pages.get_unpublished_pages()
@@ -123,6 +128,14 @@ class SSSG:
                 log(up.path_to_page, True)
             log('')
 
+        # build the _tags pages
+        for tag, pages in self.tags.pages.items():
+            content = self.tags.render(tag, pages)
+            tag_index_dir = f'{self.tag_dir}/{slugify(tag)}'
+            tag_index = f'{tag_index_dir}/index.html'
+            os.makedirs(tag_index_dir, exist_ok=True)
+            write(tag_index, content)
+
         log('finished builidng site')
 
     def build_pages(self):
@@ -132,11 +145,18 @@ class SSSG:
 
                 if file.endswith('.md'):
                     page = MarkdownPage(template=self.template,
-                        source_path=self.source_path, path_to_page=full_path)
+                        source_path=self.source_path, path_to_page=full_path,
+                        tag_dir=self.tag_dir)
                 else:
                     continue
 
                 self.pages.add_page(page)
+
+                if not page.published:
+                    continue
+
+                for tag in page.tags():
+                    self.tags[tag.tag] = page
 
     def index_directories(self):
         pass
@@ -150,6 +170,7 @@ class Template:
     def __init__(self, template_path):
         self.template_path = template_path
         self.loader = template.Loader(self.template_path)
+        self._active_modules = {}
 
     def render_string(self, string, **template_kwargs):
         temp = template.Template(string, loader=self.loader)
@@ -161,10 +182,21 @@ class Template:
             loader=self.loader)
         return temp.generate(**template_kwargs)
 
+    def _ui_module(self, name, module):
+        def render(*args, **kwargs) -> str:  # type: ignore
+            if not hasattr(self, "_active_modules"):
+                self._active_modules = {}
+            if name not in self._active_modules:
+                self._active_modules[name] = module(self)
+            rendered = self._active_modules[name].render(*args, **kwargs)
+            return rendered
+
+        return render
+
 
 class Pages:
 
-    def __init__(self, source_path, pages=None, template=None):
+    def __init__(self, source_path, pages=None):
         self.source_path = source_path
         self.pages = pages or []
 
@@ -195,8 +227,9 @@ class Pages:
 
 class Page:
 
-    def __init__(self, template, source_path, content=None):
+    def __init__(self, template, source_path, tag_dir, content=None):
         self.template = template
+        self.tag_dir = tag_dir
         self.source_path = source_path
         self.content = content
         self.published = True
@@ -214,11 +247,44 @@ class Page:
         return self.source_path
 
 
+class TaggedPages:
+
+    def __init__(self, page, template):
+        self.path_to_page = page
+        self.template = template
+        self.pages = {}
+
+    def __setitem__(self, tag, page) -> None:
+        if tag not in self.pages:
+            self.pages[tag] = []
+
+        self.pages[tag].append(page)
+
+    def render(self, tag, published_pages=None):
+        published_pages = published_pages or []
+        template_kwargs = {
+            'tag': tag,
+            'pages': published_pages,
+        }
+
+        return self.template.render_file(self.path_to_page,
+            **template_kwargs).decode('utf-8')
+
+
+class Tag:
+
+    def __init__(self, tag, tag_dir='/_tags'):
+        self.tag = tag
+        self.slug = slugify(tag)
+        self.path = f'{tag_dir}/{self.slug}'
+
+
+
 class MarkdownPage(Page):
 
-    def __init__(self, template, source_path, path_to_page=None,
+    def __init__(self, template, source_path, tag_dir, path_to_page=None,
                  extensions=None):
-        super().__init__(template=template, source_path=source_path)
+        super().__init__(template=template, source_path=source_path, tag_dir=tag_dir)
         self.path_to_page = path_to_page
         _, self.page_name = os.path.split(self.path_to_page)
         extensions = extensions or ['markdown.extensions.meta', 'codehilite']
@@ -278,6 +344,19 @@ class MarkdownPage(Page):
 
     def full_path(self):
         return self.path_to_page
+
+    def tags(self):
+        final = []
+        tag_list = self.meta.get('tags', [''])
+
+        for tags in tag_list:
+            for tag in tags.split(','):
+                tag = tag.strip()
+
+                if tag != '':
+                    final.append(Tag(tag))
+
+        return final
 
     def render(self, published_pages=None, previous_page=None, next_page=None):
         published_pages = published_pages or []
